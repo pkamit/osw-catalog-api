@@ -9,6 +9,14 @@ osw catalog api
 7) $ docker-compose run --rm app sh -c "django-admin startproject app ."
 8) docker compose for db setup
 9) git hub actions is pending
+=========================
+Build Again:
+    151  docker-compose down
+    152  docker-compose down --volumes
+    153  docker-compose build
+    154  docker-compose up
+
+
 ==========
 10) Updated user model and write the test cases
 11) created super user
@@ -49,13 +57,82 @@ LISTm CREATE RETRIEVE DESTROY UPDATE
 
 17) API view : get put delete used but genericapiview with mixing doing awesome
 
+18) Create action and attach serializer
 
+=======================================
+create
+LIST
+vIEW DETAIL
+uPDATE
+dELETE
+/articles/
+    - get - list all articles
+    - post - create article
+/articles/<article_id>
+    - GET - Detail view of article
+    - PUT/PATCH - Update article
+    - DELETE - Delete article
+
+- Create test case for articles api
+- Create serializer -- > Viewsets --> url
+    viewsets
+        class ArticleViewSet(viewsets.ModelViewSet):
+        serializer_class = serializers.ArticleSerializer
+    url
+        router = DefaultRouter()
+        router.register('articles', views.ArticleViewSet)
 
 
 ======================================
+Category Model
+    name: Name of tag to create
+    user: user who created category
+/api/article/category
+    POST- create a category
+    PUT/PATCH - update categories
+    DELETE - remove category
+    GET - List available category
+
+===============================================
+Image fields:
+    - pillow at requirements
+    - configuration in dockerfile
+        - jpg-dev, z-lib , zlib-dev,
+        - vol web media , vol web static
+    - in settings.py attach directory
+    - set url path for debug made in dev environement
+    - import uuid and os in models.py
+
+
+
+
+
+
+
 django version
 drf version
 classes and objects
 big images managed
 write_only_fields = ['password']
+API VIEW and Viewsets are base classes of DRF
+APIVIEW:
+    Foucused around HTTP methods
+    class methods for http methods
+        GET,POST,PUT,PATCH,DELETE
+    Useful for non crud apis
+        Bespoke logic(auth,jobs,external apis)
+Viewsets:
+    Focused around actions
+        Retrieve , list, update, partial update , destroy
+    Map to Django Models
+    Use Routers to generate URLS
+    Great for CRUD operations on models
+    ========================================
+    Refrences:
+
+    https://www.youtube.com/watch?v=B3HGwFlBvi8
+
+    multisites
+    https://www.valentinog.com/blog/django-vhosts/
+
 
