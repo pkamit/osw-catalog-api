@@ -21,6 +21,7 @@ from rest_framework.permissions import IsAuthenticated
 from core.models import (
     Article,
     Category,
+    AttributeVariants,
 )
 from article import serializers
 
@@ -54,10 +55,14 @@ class ArticleViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         """ retrieve articles for aurthenticated user"""
         categories = self.request.query_params.get('categories')
+        attributes = self.request.query_params.get('attributes')
         queryset = self.queryset
         if categories:
             cat_ids = self._params_to_ints(categories)
             queryset = queryset.filter(categories__id__in=cat_ids)
+        if attributes:
+            attr_ids = self._params_to_ints(attributes)
+            queryset = queryset.filter(attributes__id__in=attr_ids)
         return queryset.filter(user=self.request.user).order_by('-id')
 
     def get_serializer_class(self):
@@ -66,8 +71,6 @@ class ArticleViewSet(viewsets.ModelViewSet):
             return serializers.ArticleSerializer
         elif self.action == 'upload_image':
             return serializers.ArticleImageSerializer
-        elif self.action == 'uploadnew_image':
-            return serializers.ArticleNewImageSerializer
         return self.serializer_class
 
     def perform_create(self, serializer):
@@ -85,28 +88,9 @@ class ArticleViewSet(viewsets.ModelViewSet):
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @action(methods=['POST'], detail=True, url_path='uploadnew-image')
-    def uploadnew_image(self, request, pk=None):
-        """ Upload an image to article"""
-        article = self.get_object()
-        serializer = self.get_serializer(article, data=request.data)
 
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-@extend_schema_view(
-    list=extend_schema(
-        parameters=[
-            OpenApiParameter(
-                'assigned_only',
-                OpenApiTypes.INT, enum=[0,1],
-                description='Filter by items to article.',
-            )
-        ]
-    )
-)
+
 
 class BaseRecipeAttrViewSet(mixins.DestroyModelMixin,
                             mixins.ListModelMixin,
@@ -127,9 +111,30 @@ class BaseRecipeAttrViewSet(mixins.DestroyModelMixin,
         return queryset.filter(user=self.request.user).order_by('-name').distinct()
        # return self.queryset.filter(user=self.request.user).order_by('-name').distinct()
 
-
+@extend_schema_view(
+    list=extend_schema(
+        parameters=[
+            OpenApiParameter(
+                'assigned_only',
+                OpenApiTypes.INT, enum=[0,1],
+                description='Filter by items to article.',
+            )
+        ]
+    )
+)
 class CategoryViewSet(BaseRecipeAttrViewSet):
     """ manage category in the database"""
     serializer_class = serializers.CategorySerializer
     queryset = Category.objects.all()
 
+class AttributeVariantsViewSet(BaseRecipeAttrViewSet):
+    """ manage category in the database"""
+    serializer_class = serializers.AttributeVariantsSerializer
+    queryset = AttributeVariants.objects.all()
+
+    def get_serializer_class(self):
+        serializer_class = self.serializer_class
+        if self.request.method == 'PUT':
+            serializer_class = serializers.AttributeVariantsWithoutSerializer
+
+        return serializer_class

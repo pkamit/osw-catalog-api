@@ -64,7 +64,16 @@ class Article(models.Model):
     stock=models.CharField(max_length=255, blank=True)
     categories= models.ManyToManyField('Category')
     image = models.ImageField(null=True, upload_to=article_image_file_path)
+    attributes= models.ManyToManyField('AttributeVariants')
+   # uploaded_images = models.ManyToManyField('ArticleImage', related_name='+')
 
+    class Meta:
+        verbose_name_plural = '1. Article'
+        indexes = [
+            models.Index(fields=['title',]),
+            models.Index(fields=['short_description',]),
+
+        ]
     def __str__(self):
         return self.title
 
@@ -72,25 +81,52 @@ class Category(models.Model):
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
-    )
+        )
     name=models.CharField(max_length=50)
     created_at=models.DateTimeField(auto_now_add=True)
     updated_at=models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name_plural = '4. Category'
+        indexes = [
+            models.Index(fields=['name',]),
+
+        ]
 
     def __str__(self):
         return self.name
 
 class AttributeVariants(models.Model):
     """ Article vairants model"""
-    article = models.ForeignKey(
-        Article,
-        on_delete=models.CASCADE
-    )
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        null=True
+        )
+
     type = models.CharField(default=None, max_length=32, null=False)
     name = models.CharField(default=None, max_length=32, null=False)
     price = models.DecimalField(max_digits=5, decimal_places=2, default='0.00')
     created_at=models.DateTimeField(auto_now_add=True)
     updated_at=models.DateTimeField(auto_now=True)
 
+    class Meta:
+        verbose_name_plural = '2. Article Attributes'
+        indexes = [
+            models.Index(fields=['type',]),
+
+        ]
+
     def __str__(self):
         return self.name
+
+class ArticleImage(models.Model):
+    """ Article images"""
+    article = models.ForeignKey(Article, on_delete=models.CASCADE, related_name='images')
+    image = models.ImageField(upload_to=article_image_file_path)
+
+    class Meta:
+        verbose_name_plural = '3. Article Image'
+
+    # def __str__(self):
+        # return "%s" % (self.article.title)

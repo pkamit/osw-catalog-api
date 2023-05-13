@@ -12,6 +12,7 @@ from article import views
 router = DefaultRouter()
 router.register('articles', views.ArticleViewSet)
 router.register('categories', views.CategoryViewSet)
+router.register('attributevariants', views.AttributeVariantsViewSet)
 app_name = 'article'
 
 urlpatterns = [
