@@ -49,3 +49,11 @@ admin.site.register(models.Article)
 admin.site.register(models.Category)
 admin.site.register(models.AttributeVariants)
 admin.site.register(models.ArticleImage)
+admin.site.register(models.Attribute)
+admin.site.register(models.AttributeValue)
+""" New product Models registrations"""
+
+admin.site.register(models.ProductCategory)
+admin.site.register(models.PAttribute)
+admin.site.register(models.Product)
+admin.site.register(models.ProductAttribute)

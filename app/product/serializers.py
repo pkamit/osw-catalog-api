@@ -5,64 +5,62 @@ from rest_framework import serializers
 #from drf_writable_nested import WritableNestedModelSerializer
 
 from core.models import (
-    Article,
-    Category,
-    AttributeVariants,
-    ArticleImage,
-    Attribute,
-    AttributeValue
+    Product,
+    ProductCategory,
+    ProductAttribute,
+    PAttribute
 )
 
-class CategorySerializer(serializers.ModelSerializer):
+class ProductCategorySerializer(serializers.ModelSerializer):
     " Serializers for Category"
 
     class Meta:
-        model = Category
+        model = ProductCategory
         fields = ['id' , 'name']
         read_only_fields = ['id']
 
-class AttributeVariantsSerializer(serializers.ModelSerializer):
+class ProductAttributeSerializer(serializers.ModelSerializer):
     """ Serializer for uploading images to article"""
 
     class Meta:
-        model =  AttributeVariants
+        model =  ProductAttribute
         fields  =  ['id', 'type', 'name' , 'price']
-        read_only_fields = ['id']
+        read_only_fields = ['id', 'type']
        # extra_kwargs = {'type': {'required': 'True'}}
 
-class ArticleImageSerializers(serializers.ModelSerializer):
-    """ Serializer for article image"""
+# class ArticleImageSerializers(serializers.ModelSerializer):
+#     """ Serializer for article image"""
 
-    class Meta:
-        model = ArticleImage
-        fields = '__all__'
-
-
-class AttributeVariantsWithoutSerializer(serializers.ModelSerializer):
-    """ Serializer for uploading images to article"""
-
-    class Meta:
-        model =  AttributeVariants
-        fields  =  ['id', 'type',  'name' , 'price']
-        read_only_fields = ['id' ]
-       # extra_kwargs = {'type': {'required': 'True'}}
+#     class Meta:
+#         model = ArticleImage
+#         fields = '__all__'
 
 
+# class AttributeVariantsWithoutSerializer(serializers.ModelSerializer):
+#     """ Serializer for uploading images to article"""
 
-class ArticleSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model =  AttributeVariants
+#         fields  =  ['id', 'type',  'name' , 'price']
+#         read_only_fields = ['id' , 'type']
+#        # extra_kwargs = {'type': {'required': 'True'}}
+
+
+
+class ProductSerializer(serializers.ModelSerializer):
     """ Serializer for articleS"""
-    categories = CategorySerializer(many=True, required=False)
-    attributes = AttributeVariantsSerializer(many=True, required=False)
+    categories = ProductCategorySerializer(many=True, required=False)
+    attributes = ProductAttributeSerializer(many=True, required=False)
 
-    images = ArticleImageSerializers(many=True, required=False)
-    uploaded_images = serializers.ListField(
-        child=serializers.ImageField(allow_empty_file=False, use_url=False),
-        write_only=True,
-        required=False
-    )
+    #images = ArticleImageSerializers(many=True, required=False)
+    # uploaded_images = serializers.ListField(
+    #     child=serializers.ImageField(allow_empty_file=False, use_url=False),
+    #     write_only=True,
+    #     required=False
+    # )
 
     class Meta:
-        model = Article
+        model = Product
         fields = [
             'id', 'title', 'short_description', 'price', 'stock' , 'categories' ,
             'attributes' , 'images' , 'uploaded_images'
@@ -85,7 +83,6 @@ class ArticleSerializer(serializers.ModelSerializer):
         for attribute in attributes:
             attribute_obj , created = AttributeVariants.objects.get_or_create(
                 user=auth_user,
-                article=article,
                 **attribute
             )
             article.attributes.add(attribute_obj)

@@ -51,8 +51,32 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     USERNAME_FIELD = 'email'
 
+class Attribute(models.Model):
+    name = models.CharField(max_length=100)
+
+    class Meta:
+        verbose_name_plural = '4. Attribute'
+        indexes = [
+            models.Index(fields=['name',]),
+
+
+        ]
+
+    def __str__(self):
+        return self.name
+
+
+
+
 class Article(models.Model):
     """ Article object."""
+    VARIANTS = (
+        ('None', 'None'),
+        ('Size', 'Size'),
+        ('Color', 'Color'),
+        ('Size-Color', 'Size-Color')
+    )
+
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
@@ -66,6 +90,8 @@ class Article(models.Model):
     image = models.ImageField(null=True, upload_to=article_image_file_path)
     attributes= models.ManyToManyField('AttributeVariants')
    # uploaded_images = models.ManyToManyField('ArticleImage', related_name='+')
+    variant=models.CharField(max_length=10,choices=VARIANTS, default='None')
+   # attributes_new = models.ManyToManyField(AttributeValue)
 
     class Meta:
         verbose_name_plural = '1. Article'
@@ -76,6 +102,21 @@ class Article(models.Model):
         ]
     def __str__(self):
         return self.title
+
+class AttributeValue(models.Model):
+    attribute = models.ForeignKey(Attribute, on_delete=models.CASCADE)
+    article = models.ForeignKey(Article, on_delete=models.CASCADE)
+    value = models.CharField(max_length=100)
+    class Meta:
+        verbose_name_plural = '5. Attribute Value'
+        indexes = [
+            models.Index(fields=['value',]),
+
+
+        ]
+
+    def __str__(self):
+        return self.value
 
 class Category(models.Model):
     user = models.ForeignKey(
@@ -95,6 +136,9 @@ class Category(models.Model):
 
     def __str__(self):
         return self.name
+
+
+
 
 class AttributeVariants(models.Model):
     """ Article vairants model"""
@@ -130,3 +174,65 @@ class ArticleImage(models.Model):
 
     # def __str__(self):
         # return "%s" % (self.article.title)
+
+""" New category Model"""
+
+class ProductCategory(models.Model):
+    name = models.CharField(max_length=100)
+    description = models.TextField()
+
+    def __str__(self):
+        return self.name
+
+
+class PAttribute(models.Model):
+    name = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.name
+
+
+class Product(models.Model):
+    title = models.CharField(max_length=100)
+    description = models.TextField()
+    price = models.DecimalField(max_digits=10, decimal_places=2)
+    category = models.ForeignKey(ProductCategory, on_delete=models.CASCADE)
+    attributes = models.ManyToManyField(PAttribute, through='ProductAttribute')
+
+    def __str__(self):
+        return self.title
+
+
+class ProductAttribute(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    attribute = models.ForeignKey(PAttribute, on_delete=models.CASCADE)
+    value = models.CharField(max_length=100)
+
+    def __str__(self):
+        return f"{self.product.title} - {self.attribute.name}: {self.value}"
+
+
+""" Multistep forms"""
+class personal(models.Model):
+    name = models.CharField(max_length=100)
+    email = models.EmailField(max_length=100)
+
+    def __str__(self):
+        return self.name
+
+class professional(models.Model):
+    designation = models.CharField(max_length=100)
+    organization =  models.CharField(max_length=100)
+    place = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.designation
+
+class orderdetails(models.Model):
+    typeofproducts = models.CharField(max_length=100)
+    description = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.typeofproducts
+
+

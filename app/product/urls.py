@@ -13,8 +13,7 @@ router = DefaultRouter()
 router.register('articles', views.ArticleViewSet)
 router.register('categories', views.CategoryViewSet)
 router.register('attributevariants', views.AttributeVariantsViewSet)
-router.register('article-list', views.ProductListAPIView)
-app_name = 'article'
+app_name = 'product'
 
 urlpatterns = [
     path('', include(router.urls)),

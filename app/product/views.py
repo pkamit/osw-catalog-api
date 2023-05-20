@@ -17,15 +17,14 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
-from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import generics
-import django_filters
+
 from core.models import (
-    Article,
-    Category,
-    AttributeVariants,
+    Product,
+    ProductCategory,
+    ProductAttribute,
+    PAttribute
 )
-from article import serializers
+from product import serializers
 
 
 @extend_schema_view(
@@ -35,11 +34,6 @@ from article import serializers
                 'categories',
                 OpenApiTypes.STR,
                 description='Comma separated list of categories Ids to filter',
-            ),
-            OpenApiParameter(
-                'attributes',
-                OpenApiTypes.STR,
-                description='Comma separated list of attributes Ids to filter',
             ),
 
         ]
@@ -145,37 +139,3 @@ class AttributeVariantsViewSet(BaseRecipeAttrViewSet):
             serializer_class = serializers.AttributeVariantsWithoutSerializer
 
         return serializer_class
-
-
-    """ Filter"""
-
-class ProductFilter(django_filters.FilterSet):
-
-    attributes__name = django_filters.ModelMultipleChoiceFilter(
-        field_name='attributes',
-        lookup_expr='icontains',
-
-    )
-   # attributes__name = django_filters.CharFilter(lookup_expr='icontains')
-    # Add more filters for other fields if needed
-
-    class Meta:
-        model = Article
-        fields = ['attributes']  # Add more fields for filtering if needed
-
-class ProductListAPIView(BaseRecipeAttrViewSet):
-    """ manage category in the database"""
-    serializer_class = serializers.ArticleSerializer
-    queryset = Article.objects.all()
-    filter_backends = [DjangoFilterBackend]
-    filterset_class = ProductFilter
-
-# class ProductListAPIView(generics.ListAPIView):
-#     queryset = Article.objects.all()
-#     serializer_class = serializers.ArticleSerializer
-#     filter_backends = [DjangoFilterBackend]
-#     filterset_class = ProductFilter
-
-
-
-

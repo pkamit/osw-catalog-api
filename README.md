@@ -135,4 +135,20 @@ Viewsets:
     multisites
     https://www.valentinog.com/blog/django-vhosts/
 
+ 30 Django E Commerce Product Attributes Variants Amazon style Size Color #1 [English]
+https://www.youtube.com/watch?v=hhh6iv9TP7g
+https://www.youtube.com/watch?v=HssciqnFjyA&list=PLSPMgrv4IuJ5tX9Sk7hjNrHsQRC3ppRtG&index=2
+How to Install and Setup Django Oscar | E-Commerce Website | Django Oscar #1
 
+
+https://replit.com/@tushantk/HumiliatingInterestingMarketing#product/models.py
+
+Fixture to load data
+https://youtu.be/8LHdbaV7Dvo?t=1258
+
+
+To prepare Faker data
+https://www.youtube.com/watch?v=8LHdbaV7Dvo
+
+python manage.py dumpdata oscar.apps.catalogue.Product > products.json
+python manage.py loaddata products.json
